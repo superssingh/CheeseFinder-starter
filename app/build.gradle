@@ -1,0 +1,31 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
+
+    defaultConfig {
+        applicationId "com.raywenderlich.cheesefinder"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+final APPCOMPAT_VERSION = '25.3.1'
+final RX_JAVA_VERSION = '2.0.1'
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile "com.android.support:appcompat-v7:$APPCOMPAT_VERSION"
+    compile "com.android.support:recyclerview-v7:$APPCOMPAT_VERSION"
+    compile "io.reactivex.rxjava2:rxjava:$RX_JAVA_VERSION"
+    compile "io.reactivex.rxjava2:rxandroid:$RX_JAVA_VERSION"
+}
