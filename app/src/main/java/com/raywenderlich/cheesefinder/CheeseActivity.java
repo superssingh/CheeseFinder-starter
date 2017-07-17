@@ -22,112 +22,129 @@
 
 package com.raywenderlich.cheesefinder;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Cancellable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
+import static io.reactivex.Observable.create;
+
 public class CheeseActivity extends BaseSearchActivity {
 
-//   //1 example for Button observable...
-//    private Observable<String> createButtonObservable() {
-//        return create(new ObservableOnSubscribe<String>() {
-//
-//            @Override
-//            public void subscribe(final ObservableEmitter<String> e) throws Exception {
-//                mSearchButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        e.onNext(mQueryEditText.getText().toString());
-//                    }
-//                });
-//
-//                e.setCancellable(new Cancellable() {
-//                    @Override
-//                    public void cancel() throws Exception {
-//                        mSearchButton.setOnClickListener(null);
-//                    }
-//                });
-//            }
-//        });
-//    }
-//
-//    //2 example for TextView observale, when user type in textview it search and show result.
-//     private Observable<String> createTextObservable(){
-////         Observable textObservable =
-//                 return Observable.create(new ObservableOnSubscribe<String>() {
-//             @Override
-//             public void subscribe(final ObservableEmitter<String> e) throws Exception {
-//
-//                 final TextWatcher watcher= new TextWatcher() {
-//                     @Override
-//                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                     }
-//
-//                     @Override
-//                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                         e.onNext(s.toString());
-//                     }
-//
-//                     @Override
-//                     public void afterTextChanged(Editable s) {
-//                     }
-//                 };
-//
-//                 //add watcher into addTextChangedListener
-//                 mQueryEditText.addTextChangedListener(watcher);
-//
-//                 e.setCancellable(new Cancellable() {
-//                     @Override
-//                     public void cancel() throws Exception {
-//                         //remove watcher from removeTextChangedListener
-//                         mQueryEditText.removeTextChangedListener(watcher);
-//                     }
-//                 });
-//             }
-//
-//         });
-//
-////         return textObservable;
-//     }
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        ObservableStart();
-//
-//    }
-//
-//    private void ObservableStart(){
-//
-//// 1 for ButtonObservable
-////    Observable<String> searchTextObservable = createButtonObservable();
-//
-//// 2 for textObservable
-//    Observable<String> searchTextObservable = createTextObservable();
-//        searchTextObservable
-//
-//                // 2 show progressbar through mainThread
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .doOnNext(new Consumer<String>() {
-//                    @Override
-//                    public void accept(String s) throws Exception {
-//                        showProgressBar();
-//                    }
-//                })
-//
-//                //3 run method under the Schedulers.io thread
-//                .observeOn(Schedulers.io())
-//                .map(new Function<String, List<String>>() {
-//                    @Override
-//                    public List<String> apply(String s) throws Exception {
-//                        return mCheeseSearchEngine.search(s);
-//                    }
-//                })
-//
-//                // 4 show data under the main thread
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Consumer<List<String>>() {
-//                    @Override
-//                    public void accept(List<String> strings) throws Exception {
-//                        hideProgressBar();
-//                        showResult(strings);
-//                    }
-//                });
-//    }
+   //1 example for Button observable...
+    private Observable<String> createButtonObservable() {
+        return create(new ObservableOnSubscribe<String>() {
+
+            @Override
+            public void subscribe(final ObservableEmitter<String> e) throws Exception {
+                mSearchButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        e.onNext(mQueryEditText.getText().toString());
+                    }
+                });
+
+                e.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        mSearchButton.setOnClickListener(null);
+                    }
+                });
+            }
+        });
+    }
+
+    //2 example for TextView observale, when user type in textview it search and show result.
+     private Observable<String> createTextObservable(){
+//         Observable textObservable =
+                 return Observable.create(new ObservableOnSubscribe<String>() {
+             @Override
+             public void subscribe(final ObservableEmitter<String> e) throws Exception {
+
+                 final TextWatcher watcher= new TextWatcher() {
+                     @Override
+                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                     }
+
+                     @Override
+                     public void onTextChanged(CharSequence s, int start, int before, int count) {
+                         e.onNext(s.toString());
+                     }
+
+                     @Override
+                     public void afterTextChanged(Editable s) {
+                     }
+                 };
+
+                 //add watcher into addTextChangedListener
+                 mQueryEditText.addTextChangedListener(watcher);
+
+                 e.setCancellable(new Cancellable() {
+                     @Override
+                     public void cancel() throws Exception {
+                         //remove watcher from removeTextChangedListener
+                         mQueryEditText.removeTextChangedListener(watcher);
+                     }
+                 });
+             }
+
+         });
+
+//         return textObservable;
+     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ObservableStart();
+
+    }
+
+    private void ObservableStart(){
+
+// 1 for ButtonObservable
+//    Observable<String> searchTextObservable = createButtonObservable();
+
+// 2 for textObservable
+    Observable<String> searchTextObservable = createTextObservable();
+        searchTextObservable
+
+                // 2 show progressbar through mainThread
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        showProgressBar();
+                    }
+                })
+
+                //3 run method under the Schedulers.io thread
+                .observeOn(Schedulers.io())
+                .map(new Function<String, List<String>>() {
+                    @Override
+                    public List<String> apply(String s) throws Exception {
+                        return mCheeseSearchEngine.search(s);
+                    }
+                })
+
+                // 4 show data under the main thread
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<String>>() {
+                    @Override
+                    public void accept(List<String> strings) throws Exception {
+                        hideProgressBar();
+                        showResult(strings);
+                    }
+                });
+    }
 }
