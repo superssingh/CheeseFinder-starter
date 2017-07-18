@@ -33,6 +33,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -42,6 +43,8 @@ import io.reactivex.schedulers.Schedulers;
 import static io.reactivex.Observable.create;
 
 public class CheeseActivity extends BaseSearchActivity {
+
+    private Disposable mDisposable;
 
    //1 example for Button observable...
     private Observable<String> createButtonClickObservable() {
@@ -129,7 +132,8 @@ public class CheeseActivity extends BaseSearchActivity {
 
         Observable<String> searchTextObservable = Observable.merge(textChangeStream, buttonClickStream);
 
-        searchTextObservable
+        // add Observable object into disposable
+        mDisposable= searchTextObservable
                 // 2 show progressbar through mainThread
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<String>() {
@@ -157,5 +161,14 @@ public class CheeseActivity extends BaseSearchActivity {
                         showResult(strings);
                     }
                 });
+    }
+
+    // dispose Disposable object
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (!mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
     }
 }
