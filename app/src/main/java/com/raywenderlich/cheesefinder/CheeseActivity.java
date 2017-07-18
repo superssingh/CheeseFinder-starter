@@ -35,6 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 import static io.reactivex.Observable.create;
@@ -66,8 +67,7 @@ public class CheeseActivity extends BaseSearchActivity {
 
     //2 example for TextView observale, when user type in textview it search and show result.
      private Observable<String> createTextObservable(){
-//         Observable textObservable =
-                 return Observable.create(new ObservableOnSubscribe<String>() {
+         Observable textObservable = Observable.create(new ObservableOnSubscribe<String>() {
              @Override
              public void subscribe(final ObservableEmitter<String> e) throws Exception {
 
@@ -100,7 +100,12 @@ public class CheeseActivity extends BaseSearchActivity {
 
          });
 
-//         return textObservable;
+         return textObservable.filter(new Predicate<String>() {
+             @Override
+             public boolean test(String query) throws Exception {
+                 return query.length() >= 2;
+             }
+         });
      }
 
     @Override
