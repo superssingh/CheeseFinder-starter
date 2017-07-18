@@ -27,6 +27,7 @@ import android.text.TextWatcher;
 import android.view.View;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -43,7 +44,7 @@ import static io.reactivex.Observable.create;
 public class CheeseActivity extends BaseSearchActivity {
 
    //1 example for Button observable...
-    private Observable<String> createButtonObservable() {
+    private Observable<String> createButtonClickObservable() {
         return create(new ObservableOnSubscribe<String>() {
 
             @Override
@@ -66,7 +67,7 @@ public class CheeseActivity extends BaseSearchActivity {
     }
 
     //2 example for TextView observale, when user type in textview it search and show result.
-     private Observable<String> createTextObservable(){
+     private Observable<String> createTextChangeObservable(){
          Observable textObservable = Observable.create(new ObservableOnSubscribe<String>() {
              @Override
              public void subscribe(final ObservableEmitter<String> e) throws Exception {
@@ -100,12 +101,14 @@ public class CheeseActivity extends BaseSearchActivity {
 
          });
 
+//        filter operator's Predicate returns data when two digit typed by user.
+//        debounce operator waits for 1000 milliseconds before emitting the latest query text.
          return textObservable.filter(new Predicate<String>() {
              @Override
              public boolean test(String query) throws Exception {
                  return query.length() >= 2;
              }
-         });
+         }).debounce(1000, TimeUnit.MILLISECONDS);
      }
 
     @Override
@@ -116,14 +119,17 @@ public class CheeseActivity extends BaseSearchActivity {
     }
 
     private void ObservableStart(){
-
 // 1 for ButtonObservable
 //    Observable<String> searchTextObservable = createButtonObservable();
-
 // 2 for textObservable
-    Observable<String> searchTextObservable = createTextObservable();
-        searchTextObservable
+//    Observable<String> searchTextObservable = createTextObservable();
 
+        Observable<String> buttonClickStream = createButtonClickObservable();
+        Observable<String> textChangeStream = createTextChangeObservable();
+
+        Observable<String> searchTextObservable = Observable.merge(textChangeStream, buttonClickStream);
+
+        searchTextObservable
                 // 2 show progressbar through mainThread
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<String>() {
